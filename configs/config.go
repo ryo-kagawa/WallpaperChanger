@@ -8,18 +8,13 @@ import (
 )
 
 type Config struct {
-	Input struct {
-		ImagePath string `yaml:"imagePath"`
-		ImageList []struct {
-			X uint64 `yaml:"x"`
-			Y uint64 `yaml:"y"`
-			W uint64 `yaml:"w"`
-			H uint64 `yaml:"h"`
-		} `yaml:"imageList"`
-	} `yaml:"input"`
-	Output struct {
-		OutputFilePath string `yaml:"outputFilePath"`
-	} `yaml:"output"`
+	ImagePath string `yaml:"imagePath"`
+	ImageList []struct {
+		X uint64 `yaml:"x"`
+		Y uint64 `yaml:"y"`
+		W uint64 `yaml:"w"`
+		H uint64 `yaml:"h"`
+	} `yaml:"imageList"`
 }
 
 func LoadConfig(filePath string) (Config, error) {

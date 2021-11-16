@@ -32,7 +32,7 @@ func main() {
 	// 対象となる画像ファイルパス一覧
 	var filePathList []string = []string{}
 	filepath.Walk(
-		config.Input.ImagePath,
+		config.ImagePath,
 		func(path string, info fs.FileInfo, err error) error {
 			// ディレクトリ判定は省略できない
 			if info.IsDir() {
@@ -46,8 +46,8 @@ func main() {
 		},
 	)
 
-	var imageList []model.ImageData = make([]model.ImageData, 0, len(config.Input.ImageList))
-	for i := 0; i < len(config.Input.ImageList); i++ {
+	var imageList []model.ImageData = make([]model.ImageData, 0, len(config.ImageList))
+	for i := 0; i < len(config.ImageList); i++ {
 		rand.Seed(time.Now().UnixNano())
 		targetFilePath := filePathList[uint64(rand.Int63n(int64(len(filePathList))))]
 		buffer, err := ioutil.ReadFile(targetFilePath)
@@ -62,14 +62,14 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		imageData = imageData.Resize(config.Input.ImageList[i].W, config.Input.ImageList[i].H)
+		imageData = imageData.Resize(config.ImageList[i].W, config.ImageList[i].H)
 		imageList = append(imageList, imageData)
 	}
 
 	// 最終的な画像サイズ
 	var width uint64
 	var height uint64
-	for _, x := range config.Input.ImageList {
+	for _, x := range config.ImageList {
 		w := x.X + x.W
 		h := x.Y + x.H
 		width = conditional.UInt64(width < w, w, width)
@@ -88,12 +88,12 @@ func main() {
 			resultImage,
 			image.Rectangle{
 				Min: image.Point{
-					X: int(config.Input.ImageList[i].X),
-					Y: int(config.Input.ImageList[i].Y),
+					X: int(config.ImageList[i].X),
+					Y: int(config.ImageList[i].Y),
 				},
 				Max: image.Point{
-					X: int(config.Input.ImageList[i].X + config.Input.ImageList[i].W),
-					Y: int(config.Input.ImageList[i].Y + config.Input.ImageList[i].H),
+					X: int(config.ImageList[i].X + config.ImageList[i].W),
+					Y: int(config.ImageList[i].Y + config.ImageList[i].H),
 				},
 			},
 			x.GetImage(),
@@ -103,7 +103,6 @@ func main() {
 	}
 
 	// ファイル出力
-	// 特殊な考慮をしたくないのでBMP固定とする
 	file, _ := os.Create("./background.bmp")
 	defer file.Close()
 	err = bmp.Encode(file, resultImage)
