@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"image"
+	"image/color"
 	"io/fs"
 	"io/ioutil"
 	"math/rand"
@@ -83,6 +84,20 @@ func main() {
 			Max: image.Pt(int(width), int(height)),
 		},
 	)
+	for x := 0; x < resultImage.Rect.Dx(); x++ {
+		for y := 0; y < resultImage.Rect.Dy(); y++ {
+			resultImage.SetRGBA(
+				x,
+				y,
+				color.RGBA{
+					R: 0x00,
+					G: 0x00,
+					B: 0x00,
+					A: 0xFF,
+				},
+			)
+		}
+	}
 	for i, x := range imageList {
 		draw.Draw(
 			resultImage,
