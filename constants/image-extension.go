@@ -2,6 +2,7 @@ package constants
 
 import (
 	"image"
+	"image/gif"
 	"image/jpeg"
 	"image/png"
 	"io"
@@ -46,6 +47,10 @@ var ImageExtensionList imageExtensionList = imageExtensionList{
 	{
 		name:   "bmp",
 		decode: bmp.Decode,
+	},
+	{
+		name:   "gif",
+		decode: gif.Decode,
 	},
 	{
 		name:   "jpeg",
