@@ -6,6 +6,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
+	"strings"
 
 	"github.com/ryo-kagawa/WallpaperChanger/model"
 	"github.com/ryo-kagawa/go-utils/conditional"
@@ -34,7 +35,7 @@ func (i imageExtensionList) Includes(extension string) bool {
 }
 
 func (i imageExtensionList) Find(extension string) (imageExtension, bool) {
-	extension = conditional.String(extension[0] == '.', extension[1:], extension)
+	extension = strings.ToLower(conditional.String(extension[0] == '.', extension[1:], extension))
 	for _, x := range i {
 		if x.name == extension {
 			return x, true
