@@ -46,8 +46,8 @@ func main() {
 	)
 
 	// 壁紙に配置する画像を生成
-	var imageList []model.ImageData = make([]model.ImageData, 0, len(config.ImageList))
-	for i := 0; i < len(config.ImageList); i++ {
+	var imageList []model.ImageData = make([]model.ImageData, 0, len(config.RectangleList))
+	for i := 0; i < len(config.RectangleList); i++ {
 		rand.Seed(time.Now().UnixNano())
 		targetFilePath := filePathList[uint64(rand.Int63n(int64(len(filePathList))))]
 		buffer, err := ioutil.ReadFile(targetFilePath)
@@ -62,16 +62,16 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		imageData = imageData.Resize(config.ImageList[i].W, config.ImageList[i].H)
+		imageData = imageData.Resize(config.RectangleList[i].Width, config.RectangleList[i].Height)
 		imageList = append(imageList, imageData)
 	}
 
 	// 最終的な画像サイズ
 	var width uint64
 	var height uint64
-	for _, x := range config.ImageList {
-		w := x.X + x.W
-		h := x.Y + x.H
+	for _, x := range config.RectangleList {
+		w := x.X + x.Width
+		h := x.Y + x.Height
 		width = conditional.UInt64(width < w, w, width)
 		height = conditional.UInt64(height < h, h, height)
 	}
@@ -102,12 +102,12 @@ func main() {
 			resultImage,
 			image.Rectangle{
 				Min: image.Point{
-					X: int(config.ImageList[i].X),
-					Y: int(config.ImageList[i].Y),
+					X: int(config.RectangleList[i].X),
+					Y: int(config.RectangleList[i].Y),
 				},
 				Max: image.Point{
-					X: int(config.ImageList[i].X + config.ImageList[i].W),
-					Y: int(config.ImageList[i].Y + config.ImageList[i].H),
+					X: int(config.RectangleList[i].X + config.RectangleList[i].Width),
+					Y: int(config.RectangleList[i].Y + config.RectangleList[i].Height),
 				},
 			},
 			x.GetImage(),
