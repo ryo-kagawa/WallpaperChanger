@@ -14,15 +14,21 @@ import (
 	"github.com/ryo-kagawa/WallpaperChanger/configs"
 	"github.com/ryo-kagawa/WallpaperChanger/constants"
 	"github.com/ryo-kagawa/WallpaperChanger/model"
+	"github.com/ryo-kagawa/WallpaperChanger/utils"
 	"github.com/ryo-kagawa/WallpaperChanger/utils/window"
 	"github.com/ryo-kagawa/go-utils/conditional"
 	"golang.org/x/image/draw"
 )
 
-const filePath = "config.yaml"
+const configFileName = "config.yaml"
 
 func main() {
-	config, err := configs.LoadConfig(filePath)
+	exeFileDirectory, err := utils.GetExeFileDirectory()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	config, err := configs.LoadConfig(filepath.Join(exeFileDirectory, configFileName))
 	if err != nil {
 		fmt.Println(err)
 		return

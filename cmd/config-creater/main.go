@@ -5,13 +5,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"github.com/ryo-kagawa/WallpaperChanger/configs"
+	"github.com/ryo-kagawa/WallpaperChanger/utils"
 	"github.com/ryo-kagawa/WallpaperChanger/utils/window"
 	"gopkg.in/yaml.v3"
 )
 
-const filePath = "config.yaml"
+const configFileName = "config.yaml"
 
 func main() {
 	fmt.Println("ファイルパスを入力してください")
@@ -34,7 +36,13 @@ func main() {
 		return
 	}
 
-	err = ioutil.WriteFile(filePath, buf, 0777)
+	exeFileDirectory, err := utils.GetExeFileDirectory()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = ioutil.WriteFile(filepath.Join(exeFileDirectory, configFileName), buf, 0777)
 	if err != nil {
 		fmt.Print(err)
 		return

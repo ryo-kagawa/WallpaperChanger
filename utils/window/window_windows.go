@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/ryo-kagawa/WallpaperChanger/configs"
+	"github.com/ryo-kagawa/WallpaperChanger/utils"
 	"github.com/ryo-kagawa/WallpaperChanger/utils/windows"
 	"github.com/ryo-kagawa/WallpaperChanger/utils/windows/windef"
 	"github.com/ryo-kagawa/WallpaperChanger/utils/windows/winuser"
@@ -13,8 +14,16 @@ import (
 )
 
 const (
-	outputFilePath = "./wallpaper.bmp"
+	outputFileName = "./wallpaper.bmp"
 )
+
+func getOutputFilePath() (string, error) {
+	exeFileDirectory, err := utils.GetExeFileDirectory()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(exeFileDirectory, outputFileName), nil
+}
 
 func GetMonitorRectangleList() ([]configs.Rectangle, error) {
 	rectangleList := []configs.Rectangle{}
@@ -43,6 +52,10 @@ func GetMonitorRectangleList() ([]configs.Rectangle, error) {
 }
 
 func SetWallPaper(img image.Image) error {
+	outputFilePath, err := getOutputFilePath()
+	if err != nil {
+		return err
+	}
 	writeFile := func(img image.Image) error {
 		file, err := os.Create(outputFilePath)
 		defer file.Close()
@@ -53,7 +66,7 @@ func SetWallPaper(img image.Image) error {
 	}
 
 	// ファイル出力
-	err := writeFile(img)
+	err = writeFile(img)
 	if err != nil {
 		return err
 	}
