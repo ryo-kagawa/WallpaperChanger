@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/ryo-kagawa/go-utils v0.0.0-20210519140154-16fe120f7de2
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410
-	golang.org/x/sys v0.0.0-20191119060738-e882bf8e40c2
+	golang.org/x/sys v0.0.0-20211117180635-dee7805ff2e1
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
