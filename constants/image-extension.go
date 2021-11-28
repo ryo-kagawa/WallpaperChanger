@@ -9,14 +9,14 @@ import (
 	"strings"
 
 	"github.com/ryo-kagawa/WallpaperChanger/model"
-	"github.com/ryo-kagawa/go-utils/conditional"
 	"golang.org/x/image/bmp"
 )
 
 type imageExtension struct {
-	name   string
-	decode func(r io.Reader) (image.Image, error)
-	_      struct{}
+	name          string
+	extensionList []string
+	decode        func(r io.Reader) (image.Image, error)
+	_             struct{}
 }
 
 func (i imageExtension) Decode(r io.Reader) (model.ImageData, error) {
@@ -35,10 +35,12 @@ func (i imageExtensionList) Includes(extension string) bool {
 }
 
 func (i imageExtensionList) Find(extension string) (imageExtension, bool) {
-	extension = strings.ToLower(conditional.String(extension[0] == '.', extension[1:], extension))
+	extension = strings.ToLower(extension)
 	for _, x := range i {
-		if x.name == extension {
-			return x, true
+		for _, y := range x.extensionList {
+			if "."+y == extension {
+				return x, true
+			}
 		}
 	}
 	return imageExtension{}, false
@@ -46,23 +48,32 @@ func (i imageExtensionList) Find(extension string) (imageExtension, bool) {
 
 var ImageExtensionList imageExtensionList = imageExtensionList{
 	{
-		name:   "bmp",
+		name: "bmp",
+		extensionList: []string{
+			"bmp",
+		},
 		decode: bmp.Decode,
 	},
 	{
-		name:   "gif",
+		name: "gif",
+		extensionList: []string{
+			"gif",
+		},
 		decode: gif.Decode,
 	},
 	{
-		name:   "jpeg",
+		name: "jpeg",
+		extensionList: []string{
+			"jpeg",
+			"jpg",
+		},
 		decode: jpeg.Decode,
 	},
 	{
-		name:   "jpg",
-		decode: jpeg.Decode,
-	},
-	{
-		name:   "png",
+		name: "png",
+		extensionList: []string{
+			"png",
+		},
 		decode: png.Decode,
 	},
 }
