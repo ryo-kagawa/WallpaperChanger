@@ -36,11 +36,11 @@ func main() {
 
 	// 対象となる画像ファイルパス一覧
 	var filePathList []string = []string{}
-	filepath.Walk(
+	filepath.WalkDir(
 		config.ImagePath,
-		func(path string, info fs.FileInfo, err error) error {
+		func(path string, d fs.DirEntry, err error) error {
 			// ディレクトリ判定は省略できない
-			if info.IsDir() {
+			if d.IsDir() {
 				return nil
 			}
 			if !constants.ImageExtensionList.Includes(filepath.Ext(path)) {
