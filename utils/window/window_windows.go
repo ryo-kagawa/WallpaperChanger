@@ -8,6 +8,9 @@ import (
 	"github.com/ryo-kagawa/WallpaperChanger/configs"
 	"github.com/ryo-kagawa/WallpaperChanger/utils"
 	"github.com/ryo-kagawa/WallpaperChanger/utils/windows"
+	"github.com/ryo-kagawa/WallpaperChanger/utils/windows/combaseapi"
+	shobjidlcore "github.com/ryo-kagawa/WallpaperChanger/utils/windows/shobjidl_core"
+	"github.com/ryo-kagawa/WallpaperChanger/utils/windows/shtypes"
 	"github.com/ryo-kagawa/WallpaperChanger/utils/windows/windef"
 	"github.com/ryo-kagawa/WallpaperChanger/utils/windows/winuser"
 	"golang.org/x/image/bmp"
@@ -23,6 +26,25 @@ func getOutputFilePath() (string, error) {
 		return "", err
 	}
 	return filepath.Join(exeFileDirectory, outputFileName), nil
+}
+
+func GetImageDirectoryPath() (string, error) {
+	LpszTitle, err := windows.UTF16PtrFromString("壁紙フォルダーを選択してください")
+	if err != nil {
+		return "", err
+	}
+	browseInfo := shobjidlcore.LPBROWSEINFO(
+		&shobjidlcore.BROWSEINFO{
+			HwndOwner: windows.HWND(0),
+			LpszTitle: windows.LPCWSTR((*windows.WCHAR)(LpszTitle)),
+			UlFlags:   shobjidlcore.BIF_NEWDIALOGSTYLE,
+		},
+	)
+	pidlistAbsolute := shobjidlcore.SHBrowseForFolder(browseInfo)
+	_, pszPath := shobjidlcore.SHGetPathFromIDListW(shtypes.PCIDLIST_ABSOLUTE(uintptr(pidlistAbsolute)))
+	combaseapi.CoTaskMemFree(windows.LPVOID(pidlistAbsolute))
+	value := windows.UTF16PtrToString((*uint16)((*windows.WCHAR)(pszPath)))
+	return value, nil
 }
 
 func GetMonitorRectangleList() ([]configs.Rectangle, error) {

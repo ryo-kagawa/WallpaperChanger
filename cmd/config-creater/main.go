@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 
 	"github.com/ryo-kagawa/WallpaperChanger/configs"
@@ -16,10 +14,11 @@ import (
 const configFileName = "config.yaml"
 
 func main() {
-	fmt.Println("ファイルパスを入力してください")
-	scanner := bufio.NewScanner(os.Stdin)
-	scanner.Scan()
-	directoryPath := scanner.Text()
+	directoryPath, err := window.GetImageDirectoryPath()
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
 	rectangleList, err := window.GetMonitorRectangleList()
 	if err != nil {
 		fmt.Print(err)
