@@ -2,7 +2,7 @@ package configs
 
 import (
 	"errors"
-	"io/ioutil"
+	"os"
 
 	"gopkg.in/yaml.v3"
 )
@@ -13,7 +13,7 @@ type Config struct {
 }
 
 func LoadConfig(filePath string) (Config, error) {
-	buf, err := ioutil.ReadFile(filePath)
+	buf, err := os.ReadFile(filePath)
 	if err != nil {
 		err = errors.New("設定ファイル" + filePath + "が見つかりません")
 		return Config{}, err

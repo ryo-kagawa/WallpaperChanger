@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/ryo-kagawa/WallpaperChanger/configs"
@@ -41,7 +41,7 @@ func main() {
 		return
 	}
 
-	err = ioutil.WriteFile(filepath.Join(exeFileDirectory, configFileName), buf, 0777)
+	err = os.WriteFile(filepath.Join(exeFileDirectory, configFileName), buf, 0777)
 	if err != nil {
 		fmt.Print(err)
 		return

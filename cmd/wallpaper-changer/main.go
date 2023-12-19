@@ -6,10 +6,9 @@ import (
 	"image"
 	"image/color"
 	"io/fs"
-	"io/ioutil"
 	"math/rand"
+	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/ryo-kagawa/WallpaperChanger/configs"
 	"github.com/ryo-kagawa/WallpaperChanger/constants"
@@ -54,9 +53,8 @@ func main() {
 	// 壁紙に配置する画像を生成
 	var imageList []model.ImageData = make([]model.ImageData, 0, len(config.RectangleList))
 	for i := 0; i < len(config.RectangleList); i++ {
-		rand.Seed(time.Now().UnixNano())
 		targetFilePath := filePathList[uint64(rand.Int63n(int64(len(filePathList))))]
-		buffer, err := ioutil.ReadFile(targetFilePath)
+		buffer, err := os.ReadFile(targetFilePath)
 		if err != nil {
 			fmt.Println(err)
 			return
