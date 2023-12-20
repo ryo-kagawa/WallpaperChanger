@@ -38,11 +38,11 @@ func (i ImageData) Resize(w, h uint64) ImageData {
 	var ratioW float64 = float64(w) / float64(i.image.Bounds().Dx())
 	var ratioH float64 = float64(h) / float64(i.image.Bounds().Dy())
 	var ratio float64 = min(ratioW, ratioH)
-	var dx uint64 = uint64(math.Min(math.Ceil(float64(i.image.Bounds().Dx())*ratio), float64(w)))
-	var dy uint64 = uint64(math.Min(math.Ceil(float64(i.image.Bounds().Dy())*ratio), float64(h)))
+	var dx uint64 = min(uint64(math.Ceil(float64(i.image.Bounds().Dx())*ratio)), w)
+	var dy uint64 = min(uint64(math.Ceil(float64(i.image.Bounds().Dy())*ratio)), h)
 	var offsetStart image.Point = image.Point{
-		X: int(math.Floor(float64((w - dx) / 2))),
-		Y: int(math.Floor(float64((h - dy) / 2))),
+		X: int((w - dx) / 2),
+		Y: int((h - dy) / 2),
 	}
 
 	draw.CatmullRom.Scale(
