@@ -15,7 +15,6 @@ import (
 	"github.com/ryo-kagawa/WallpaperChanger/model"
 	"github.com/ryo-kagawa/WallpaperChanger/utils"
 	"github.com/ryo-kagawa/WallpaperChanger/utils/window"
-	"github.com/ryo-kagawa/go-utils/conditional"
 	"golang.org/x/image/draw"
 )
 
@@ -76,8 +75,8 @@ func main() {
 	for _, x := range config.RectangleList {
 		w := x.X + x.Width
 		h := x.Y + x.Height
-		width = conditional.UInt64(width < w, w, width)
-		height = conditional.UInt64(height < h, h, height)
+		width = max(w, width)
+		height = max(h, height)
 	}
 
 	// ファイル生成
