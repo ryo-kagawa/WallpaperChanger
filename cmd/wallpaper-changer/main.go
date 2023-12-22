@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"image"
-	"image/color"
 	"io/fs"
 	"math/rand"
 	"os"
@@ -15,7 +14,6 @@ import (
 	"github.com/ryo-kagawa/WallpaperChanger/model"
 	"github.com/ryo-kagawa/WallpaperChanger/utils"
 	"github.com/ryo-kagawa/WallpaperChanger/utils/window"
-	"golang.org/x/image/draw"
 )
 
 const configFileName = "config.yaml"
@@ -73,10 +71,8 @@ func main() {
 	var width uint64
 	var height uint64
 	for _, x := range config.RectangleList {
-		w := x.X + x.Width
-		h := x.Y + x.Height
-		width = max(w, width)
-		height = max(h, height)
+		width = max(x.X+x.Width, width)
+		height = max(x.Y+x.Height, height)
 	}
 
 	// ファイル生成
@@ -86,37 +82,21 @@ func main() {
 			Max: image.Pt(int(width), int(height)),
 		},
 	)
-	for x := 0; x < resultImage.Rect.Dx(); x++ {
-		for y := 0; y < resultImage.Rect.Dy(); y++ {
-			resultImage.SetRGBA(
-				x,
-				y,
-				color.RGBA{
-					R: 0x00,
-					G: 0x00,
-					B: 0x00,
-					A: 0xFF,
-				},
-			)
-		}
-	}
+
+	// 壁紙にする画像を作成
 	for i, x := range imageList {
-		draw.Draw(
-			resultImage,
-			image.Rectangle{
-				Min: image.Point{
-					X: int(config.RectangleList[i].X),
-					Y: int(config.RectangleList[i].Y),
-				},
-				Max: image.Point{
-					X: int(config.RectangleList[i].X + config.RectangleList[i].Width),
-					Y: int(config.RectangleList[i].Y + config.RectangleList[i].Height),
-				},
-			},
-			x.GetImage(),
-			image.Point{},
-			draw.Over,
-		)
+		image := x.GetImage().(*image.RGBA)
+		for imageX := 0; imageX < image.Rect.Dx(); imageX++ {
+			for imageY := 0; imageY < image.Rect.Dy(); imageY++ {
+				offset := (int(config.RectangleList[i].Y)+imageY)*resultImage.Stride + (int(config.RectangleList[i].X)+imageX)*4
+				imageOffset := imageY*image.Stride + imageX*4
+				resultImage.Pix[offset] = image.Pix[imageOffset]
+				resultImage.Pix[offset+1] = image.Pix[imageOffset+1]
+				resultImage.Pix[offset+2] = image.Pix[imageOffset+2]
+				// アルファ値を0xFFとすることで24bit画像として出力されるようにする
+				resultImage.Pix[offset+3] = 0xFF
+			}
+		}
 	}
 
 	err = window.SetWallPaper(resultImage)
