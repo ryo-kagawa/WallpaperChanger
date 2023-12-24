@@ -40,6 +40,7 @@ func main() {
 				return nil
 			}
 			if !constants.ImageExtensionList.Includes(filepath.Ext(path)) {
+				fmt.Println("not registers image extension: " + path)
 				return nil
 			}
 			filePathList = append(filePathList, path)
