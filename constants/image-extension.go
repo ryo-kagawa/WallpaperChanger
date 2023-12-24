@@ -8,7 +8,6 @@ import (
 	"io"
 	"strings"
 
-	"github.com/ryo-kagawa/WallpaperChanger/model"
 	"golang.org/x/image/bmp"
 )
 
@@ -19,12 +18,8 @@ type imageExtension struct {
 	_             struct{}
 }
 
-func (i imageExtension) Decode(r io.Reader) (model.ImageData, error) {
-	img, err := i.decode(r)
-	if err != nil {
-		return model.ImageData{}, err
-	}
-	return model.NewImageData(img), nil
+func (i imageExtension) Decode(r io.Reader) (image.Image, error) {
+	return i.decode(r)
 }
 
 type imageExtensionList []imageExtension
@@ -38,7 +33,7 @@ func (i imageExtensionList) Find(extension string) (imageExtension, bool) {
 	extension = strings.ToLower(extension)
 	for _, x := range i {
 		for _, y := range x.extensionList {
-			if "."+y == extension {
+			if y == extension {
 				return x, true
 			}
 		}
@@ -50,29 +45,29 @@ var ImageExtensionList imageExtensionList = imageExtensionList{
 	{
 		name: "bmp",
 		extensionList: []string{
-			"bmp",
+			".bmp",
 		},
 		decode: bmp.Decode,
 	},
 	{
 		name: "gif",
 		extensionList: []string{
-			"gif",
+			".gif",
 		},
 		decode: gif.Decode,
 	},
 	{
 		name: "jpeg",
 		extensionList: []string{
-			"jpeg",
-			"jpg",
+			".jpeg",
+			".jpg",
 		},
 		decode: jpeg.Decode,
 	},
 	{
 		name: "png",
 		extensionList: []string{
-			"png",
+			".png",
 		},
 		decode: png.Decode,
 	},

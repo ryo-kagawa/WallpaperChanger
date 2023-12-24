@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"image"
 	"io/fs"
+	"math"
 	"math/rand"
 	"os"
 	"path/filepath"
 
 	"github.com/ryo-kagawa/WallpaperChanger/configs"
 	"github.com/ryo-kagawa/WallpaperChanger/constants"
-	"github.com/ryo-kagawa/WallpaperChanger/model"
 	"github.com/ryo-kagawa/WallpaperChanger/utils"
 	"github.com/ryo-kagawa/WallpaperChanger/utils/window"
+	"golang.org/x/image/draw"
 )
 
 const configFileName = "config.yaml"
@@ -48,10 +49,15 @@ func main() {
 		},
 	)
 
+	resultImage := createResultBaseImage(config.RectangleList)
+	// アルファ値を0xFFとすることで24bit画像として出力されるようにする
+	for i := 3; i < len(resultImage.Pix); i += 4 {
+		resultImage.Pix[i] = 0xFF
+	}
+
 	// 壁紙に配置する画像を生成
-	var imageList []model.ImageData = make([]model.ImageData, 0, len(config.RectangleList))
-	for i := 0; i < len(config.RectangleList); i++ {
-		targetFilePath := filePathList[uint64(rand.Int63n(int64(len(filePathList))))]
+	for _, x := range config.RectangleList {
+		targetFilePath := filePathList[rand.Intn(len(filePathList))]
 		buffer, err := os.ReadFile(targetFilePath)
 		if err != nil {
 			fmt.Println(err)
@@ -64,44 +70,48 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		imageData = imageData.Resize(config.RectangleList[i].Width, config.RectangleList[i].Height)
-		imageList = append(imageList, imageData)
-	}
 
-	// 最終的な画像サイズ
-	var width uint64
-	var height uint64
-	for _, x := range config.RectangleList {
-		width = max(x.X+x.Width, width)
-		height = max(x.Y+x.Height, height)
-	}
+		ratio := min(
+			float64(x.Width)/float64(imageData.Bounds().Dx()),
+			float64(x.Height)/float64(imageData.Bounds().Dy()),
+		)
+		dx := min(uint64(math.Ceil(float64(imageData.Bounds().Dx())*ratio)), x.Width)
+		dy := min(uint64(math.Ceil(float64(imageData.Bounds().Dy())*ratio)), x.Height)
+		offsetPoint := image.Pt(int((x.Width-uint64(dx))/2), int((x.Height-uint64(dy))/2))
+		startPoint := image.Pt(int(x.X), int(x.Y)).Add(offsetPoint)
 
-	// ファイル生成
-	var resultImage *image.RGBA = image.NewRGBA(
-		image.Rectangle{
-			Min: image.Point{},
-			Max: image.Pt(int(width), int(height)),
-		},
-	)
-
-	// 壁紙にする画像を作成
-	for i, x := range imageList {
-		image := x.GetImage().(*image.RGBA)
-		for imageX := 0; imageX < image.Rect.Dx(); imageX++ {
-			for imageY := 0; imageY < image.Rect.Dy(); imageY++ {
-				offset := (int(config.RectangleList[i].Y)+imageY)*resultImage.Stride + (int(config.RectangleList[i].X)+imageX)*4
-				imageOffset := imageY*image.Stride + imageX*4
-				resultImage.Pix[offset] = image.Pix[imageOffset]
-				resultImage.Pix[offset+1] = image.Pix[imageOffset+1]
-				resultImage.Pix[offset+2] = image.Pix[imageOffset+2]
-				// アルファ値を0xFFとすることで24bit画像として出力されるようにする
-				resultImage.Pix[offset+3] = 0xFF
-			}
-		}
+		draw.CatmullRom.Scale(
+			resultImage,
+			image.Rectangle{
+				Min: startPoint,
+				Max: startPoint.Add(image.Pt(int(dx), int(dy))),
+			},
+			imageData,
+			imageData.Bounds(),
+			draw.Over,
+			nil,
+		)
 	}
 
 	err = window.SetWallPaper(resultImage)
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func createResultBaseImage(rectangleList []configs.Rectangle) *image.RGBA {
+	// 最終的な画像サイズ
+	var width uint64
+	var height uint64
+	for _, x := range rectangleList {
+		width = max(x.X+x.Width, width)
+		height = max(x.Y+x.Height, height)
+	}
+
+	return image.NewRGBA(
+		image.Rectangle{
+			Min: image.Point{},
+			Max: image.Pt(int(width), int(height)),
+		},
+	)
 }
