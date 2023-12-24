@@ -80,10 +80,10 @@ func SetWallPaper(img image.Image) error {
 	}
 	writeFile := func(img image.Image) error {
 		file, err := os.Create(outputFilePath)
-		defer file.Close()
 		if err != nil {
 			return err
 		}
+		defer file.Close()
 		return bmp.Encode(file, img)
 	}
 
