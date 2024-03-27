@@ -1,6 +1,7 @@
 package window
 
 import (
+	"fmt"
 	"image"
 	"os"
 	"path/filepath"
@@ -14,6 +15,7 @@ import (
 	"github.com/ryo-kagawa/WallpaperChanger/utils/windows/windef"
 	"github.com/ryo-kagawa/WallpaperChanger/utils/windows/winuser"
 	"golang.org/x/image/bmp"
+	"golang.org/x/sys/windows/registry"
 )
 
 const (
@@ -96,6 +98,19 @@ func SetWallPaper(img image.Image) error {
 	filePath, err := filepath.Abs(outputFilePath)
 	if err != nil {
 		return err
+	}
+
+	k, err := registry.OpenKey(registry.CURRENT_USER, `Control Panel\Desktop`, registry.QUERY_VALUE)
+	if err != nil {
+		fmt.Println(`key Control Panel\Desktop is Not Open`)
+	}
+	defer k.Close()
+	value, valtype, err := k.GetIntegerValue("JPEGImportQuality")
+	if err != nil {
+		fmt.Println(`key Control Panel\Desktop value JPEGImportQuality is Not Get Integer value`)
+	}
+	if valtype != registry.DWORD || value != 0x00000064 {
+		fmt.Println(`key Control Panel\Desktop value JPEGImportQuality is Not DWORD value 0x00000064`)
 	}
 
 	winuser.SPI_SETDESKWALLPAPER(filePath)
