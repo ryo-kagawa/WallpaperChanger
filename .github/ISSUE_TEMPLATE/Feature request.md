@@ -6,13 +6,7 @@ labels: enhancement
 assignees: ryo-kagawa
 
 ---
-
-**対象OS**
-- Windows
-- Mac
-- Linux
-
 **開発内容**
 
 **対応内容**
-- [ ]
+- [ ] 
