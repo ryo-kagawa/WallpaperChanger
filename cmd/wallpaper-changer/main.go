@@ -6,7 +6,7 @@ import (
 	"image"
 	"io/fs"
 	"math"
-	"math/rand"
+	"math/rand/v2"
 	"os"
 	"path/filepath"
 
@@ -57,7 +57,7 @@ func main() {
 
 	// 壁紙に配置する画像を生成
 	for _, x := range config.RectangleList {
-		targetFilePath := filePathList[rand.Intn(len(filePathList))]
+		targetFilePath := filePathList[rand.IntN(len(filePathList))]
 		buffer, err := os.ReadFile(targetFilePath)
 		if err != nil {
 			fmt.Println(err)
