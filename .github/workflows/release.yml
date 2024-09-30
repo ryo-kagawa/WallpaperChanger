@@ -10,7 +10,7 @@ on:
       
 jobs:
   build:
-    if: ${{ [[ ${{ github.event.inputs.tag }} =~ ^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$ ]] }}
+    if: ${{ github.event.inputs.tag }} =~ ^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
