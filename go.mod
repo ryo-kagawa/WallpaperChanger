@@ -2,10 +2,12 @@ module github.com/ryo-kagawa/WallpaperChanger
 
 go 1.23.0
 
+toolchain go1.24.1
+
 require (
-	github.com/ryo-kagawa/go-utils v1.1.0
-	golang.org/x/image v0.24.0
-	golang.org/x/sys v0.30.0
+	github.com/ryo-kagawa/go-utils v1.3.0
+	golang.org/x/image v0.25.0
+	golang.org/x/sys v0.31.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
