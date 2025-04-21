@@ -6,8 +6,8 @@ toolchain go1.24.1
 
 require (
 	github.com/ryo-kagawa/go-utils v1.3.0
-	golang.org/x/image v0.25.0
-	golang.org/x/sys v0.31.0
+	golang.org/x/image v0.26.0
+	golang.org/x/sys v0.32.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
