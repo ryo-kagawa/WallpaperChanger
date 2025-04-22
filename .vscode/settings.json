@@ -1,0 +1,16 @@
+{
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "source": "PowerShell",
+      "args": [
+        "-NoExit",
+        "-Command",
+        "chcp 65001"
+      ]
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "rust-analyzer.linkedProjects": [
+    "./workspace/Cargo.toml"
+  ]
+}
