@@ -9,7 +9,7 @@ updates:
         patterns:
           - "*"
   - package-ecosystem: "cargo"
-    directory: "/"
+    directory: "/workspace"
     schedule:
       interval: monthly
     groups:
