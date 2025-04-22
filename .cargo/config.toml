@@ -1,0 +1,14 @@
+[build]
+target-dir = "./target"
+
+[alias]
+ws-build = "build --manifest-path ./workspace/Cargo.toml"
+ws-clean = "clean --manifest-path ./workspace/Cargo.toml"
+ws-fmt = "fmt --manifest-path ./workspace/Cargo.toml"
+
+[target.x86_64-pc-windows-msvc]
+rustflags = [
+  "-C", "link-args=/OPT:REF,ICF",
+  "-C", "link-args=/LTCG",
+  "-C", "target-feature=+avx2"
+]

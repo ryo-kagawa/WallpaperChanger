@@ -1,7 +1,5 @@
 「ConfigCreater.exe」を実行してconfig.yamlを作成してください
 「WallpaperChanger.exe」を実行するとconfig.yamlに記載された内容で壁紙を設定します
-「WallpaperChanger-no-console.exe」を実行するとコンソールログなしで実行します
-タスクスケジューラーに登録する場合は「WallpaperChanger-no-console.exe」を登録してください
 
 config.yamlは自動生成したものを利用することもできますが、自分で編集することも可能です
 config.yamlの説明は次の通りです

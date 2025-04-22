@@ -14,22 +14,34 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Go
-      uses: actions/setup-go@v5
+    - uses: actions/setup-go@v5
       with:
         go-version: 'stable'
-    - name: Build
+    - name: Build Go
       shell: powershell
       run: |
         go install github.com/google/go-licenses@latest
-        go-licenses save ./... --force --save_path build/WallpaperChanger/licenses
-        go build -o build/WallpaperChanger/ConfigCreater.exe -ldflags "-s -w -X=github.com/ryo-kagawa/WallpaperChanger/subcommand.name=ConfigCreater.exe -X=github.com/ryo-kagawa/WallpaperChanger/subcommand.version=${{ github.event.inputs.tag }}" -trimpath ./cmd/config-creater
-        go build -o build/WallpaperChanger/WallpaperChanger.exe -ldflags "-s -w -H=windowsgui -X=github.com/ryo-kagawa/WallpaperChanger/subcommand.name=WallpaperChanger.exe -X=github.com/ryo-kagawa/WallpaperChanger/subcommand.version=${{ github.event.inputs.tag }}" -trimpath ./cmd/wallpaper-changer
-        go build -o build/WallpaperChanger/WallpaperRegistry.exe -ldflags "-s -w -X=github.com/ryo-kagawa/WallpaperChanger/subcommand.name=WallpaperRegistry.exe -X=github.com/ryo-kagawa/WallpaperChanger/subcommand.version=${{ github.event.inputs.tag }}" -trimpath ./cmd/wallpaper-registry
-        COPY README-windows.txt build\WallpaperChanger\README.txt
-        Compress-Archive -Path build\WallpaperChanger\* -Destination build\WallpaperChanger_${{ github.event.inputs.tag }}.zip
+        go-licenses save ./... --force --save_path build/WallpaperChanger-Go/licenses
+        go build -o build/WallpaperChanger-Go/ConfigCreater.exe -ldflags "-s -w -X=github.com/ryo-kagawa/WallpaperChanger/subcommand.name=ConfigCreater.exe -X=github.com/ryo-kagawa/WallpaperChanger/subcommand.version=${{ github.event.inputs.tag }}" -trimpath ./cmd/config-creater
+        go build -o build/WallpaperChanger-Go/WallpaperChanger.exe -ldflags "-s -w -H=windowsgui -X=github.com/ryo-kagawa/WallpaperChanger/subcommand.name=WallpaperChanger.exe -X=github.com/ryo-kagawa/WallpaperChanger/subcommand.version=${{ github.event.inputs.tag }}" -trimpath ./cmd/wallpaper-changer
+        go build -o build/WallpaperChanger-Go/WallpaperRegistry.exe -ldflags "-s -w -X=github.com/ryo-kagawa/WallpaperChanger/subcommand.name=WallpaperRegistry.exe -X=github.com/ryo-kagawa/WallpaperChanger/subcommand.version=${{ github.event.inputs.tag }}" -trimpath ./cmd/wallpaper-registry
+        COPY README-windows.txt build\WallpaperChanger-Go\README.txt
+        Compress-Archive -Path build\WallpaperChanger-Go\* -Destination build\WallpaperChanger_${{ github.event.inputs.tag }}-Go.zip
+    - name: Build Rust
+      shell: powershell
+      run: |
+        cargo install cargo-bundle-licenses
+        New-Item -Path "build\WallpaperChanger-Rust" -Item Directory
+        Set-Location workspace && cargo bundle-licenses --output=..\build\WallpaperChanger-Rust\licenses.toml && Set-Location ../
+        Copy-Item "LICENSE" -Destination ".\build\WallpaperChanger-Rust\LICENSE"
+        cargo ws-build --release --locked --target x86_64-pc-windows-msvc
+        Copy-Item "target\x86_64-pc-windows-msvc\release\ConfigCreater.exe" -Destination ".\build\WallpaperChanger-Rust"
+        Copy-Item "target\x86_64-pc-windows-msvc\release\WallpaperChanger.exe" -Destination ".\build\WallpaperChanger-Rust"
+        Copy-Item "target\x86_64-pc-windows-msvc\release\WallpaperRegistry.exe" -Destination ".\build\WallpaperChanger-Rust"
+        Copy-Item "README-windows.txt" -Destination ".\build\WallpaperChanger-Rust\README.txt"
+        Compress-Archive -Path build\WallpaperChanger-Rust\* -Destination build\WallpaperChanger_${{ github.event.inputs.tag }}-Rust.zip
     - name: GitHub Release
       run: |
-        gh release create ${{ github.event.inputs.tag }} build\WallpaperChanger_${{ github.event.inputs.tag }}.zip --generate-notes --title ${{ github.event.inputs.tag }}
+        gh release create ${{ github.event.inputs.tag }} build\WallpaperChanger_${{ github.event.inputs.tag }}-Go.zip build\WallpaperChanger_${{ github.event.inputs.tag }}-Rust.zip --generate-notes --title ${{ github.event.inputs.tag }}
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
