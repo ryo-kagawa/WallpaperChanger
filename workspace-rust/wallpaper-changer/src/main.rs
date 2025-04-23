@@ -11,8 +11,7 @@ use windows::{
         System::{
             Console::{ATTACH_PARENT_PROCESS, AllocConsole, AttachConsole},
             Registry::{
-                HKEY, HKEY_CURRENT_USER, KEY_QUERY_VALUE, REG_DWORD, REG_VALUE_TYPE, RegOpenKeyExW,
-                RegQueryValueExW,
+                HKEY_CURRENT_USER, RRF_RT_REG_DWORD, RegGetValueW,
             },
         },
         UI::WindowsAndMessaging::{
@@ -161,34 +160,22 @@ fn run() -> Result<String, Box<dyn std::error::Error>> {
         .map_err(|_| "ファイル出力エラー")?;
 
     unsafe {
-        let mut hkey = HKEY::default();
-        let result = RegOpenKeyExW(
+        let mut data = 0u32;
+        let mut data_size = std::mem::size_of::<u32> as u32;
+        let result = RegGetValueW(
             HKEY_CURRENT_USER,
             w!("Control Panel\\Desktop"),
-            Some(0),
-            KEY_QUERY_VALUE,
-            &mut hkey,
-        );
-        if result.is_err() {
-            return Err(format!("RegOpenKeyExA: {}", result.0).into());
-        }
-
-        let mut value_type = REG_VALUE_TYPE(0);
-        let mut data = [0u8; 4];
-        let mut data_size = data.len() as u32;
-        let result = RegQueryValueExW(
-            hkey,
             w!("JPEGImportQuality"),
+            RRF_RT_REG_DWORD,
             None,
-            Some(&mut value_type),
-            Some(data.as_mut_ptr()),
+            Some(&mut data as *mut u32 as *mut std::ffi::c_void),
             Some(&mut data_size),
         );
         if result.is_err() {
-            return Err(format!("RegQueryValueExW: {}", result.0).into());
+            return Err(format!("RegGetValueW: {}", result.0).into());
         }
-        if value_type != REG_DWORD || u32::from_le_bytes(data) != 100 {
-            infos.push_str(&format!("RegQueryValueExW Control Panel\\Desktop value JPEGImportQuality is Not DWORD value 0x00000064"));
+        if data != 100 {
+            infos.push_str(&format!("RegGetValueW Control Panel\\Desktop value JPEGImportQuality is Not DWORD value 0x00000064"));
         }
 
         let wide: Vec<u16> = output_file_path

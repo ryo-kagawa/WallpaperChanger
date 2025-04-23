@@ -37,7 +37,10 @@ fn main() {
     println!(
         "cargo:rustc-env=VERSION_INFO={}",
         [
-            format!("WallpaperRegistry.exe {}", std::env::var("VERSION").unwrap_or(env!("CARGO_PKG_VERSION").to_string())),
+            format!(
+                "WallpaperRegistry.exe {}",
+                std::env::var("VERSION").unwrap_or(env!("CARGO_PKG_VERSION").to_string())
+            ),
             format!("rustc {}", rustc_version),
             format!("{}", metadata_dependencies)
         ]
