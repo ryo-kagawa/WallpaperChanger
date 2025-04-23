@@ -2,9 +2,9 @@
 target-dir = "./target"
 
 [alias]
-ws-build = "build --manifest-path ./workspace/Cargo.toml"
-ws-clean = "clean --manifest-path ./workspace/Cargo.toml"
-ws-fmt = "fmt --manifest-path ./workspace/Cargo.toml"
+ws-build = "build --manifest-path ./workspace-rust/Cargo.toml"
+ws-clean = "clean --manifest-path ./workspace-rust/Cargo.toml"
+ws-fmt = "fmt --manifest-path ./workspace-rust/Cargo.toml"
 
 [target.x86_64-pc-windows-msvc]
 rustflags = [
