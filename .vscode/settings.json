@@ -11,6 +11,6 @@
   },
   "terminal.integrated.defaultProfile.windows": "PowerShell",
   "rust-analyzer.linkedProjects": [
-    "./workspace/Cargo.toml"
+    "./workspace-rust/Cargo.toml"
   ]
 }

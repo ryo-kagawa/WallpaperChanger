@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "gomod"
-    directory: "/"
+    directory: "/workspace-go"
     schedule:
       interval: monthly
     groups:
@@ -9,7 +9,7 @@ updates:
         patterns:
           - "*"
   - package-ecosystem: "cargo"
-    directory: "/workspace"
+    directory: "/workspace-rust"
     schedule:
       interval: monthly
     groups:

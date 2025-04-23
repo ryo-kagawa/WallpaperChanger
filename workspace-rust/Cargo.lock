@@ -161,7 +161,7 @@ checksum = "3d7b894f5411737b7867f4827955924d7c254fc9f4d91a6aad6b097804b1018b"
 
 [[package]]
 name = "config-creater"
-version = "2.0.0-develop"
+version = "0.0.0-develop"
 dependencies = [
  "serde_json",
  "windows",
@@ -1019,7 +1019,7 @@ dependencies = [
 
 [[package]]
 name = "wallpaper-changer"
-version = "2.0.0-develop"
+version = "0.0.0-develop"
 dependencies = [
  "image",
  "rand 0.9.1",
@@ -1031,7 +1031,7 @@ dependencies = [
 
 [[package]]
 name = "wallpaper-registry"
-version = "2.0.0-develop"
+version = "0.0.0-develop"
 dependencies = [
  "serde_json",
  "windows",
