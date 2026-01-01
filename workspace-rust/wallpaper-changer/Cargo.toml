@@ -8,12 +8,12 @@ name = "WallpaperChanger"
 path = "src/main.rs"
 
 [build-dependencies]
-serde_json = "1.0.145"
+serde_json = "1.0.148"
 
 [dependencies]
 image = "0.25.9"
 rand = "0.9.2"
-yaml-rust2 = "0.10.4"
+yaml-rust2 = "0.11.0"
 walkdir = "2.5.0"
 windows = { version = "0.62.2", features = [
   "Win32_Security",
