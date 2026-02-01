@@ -4,8 +4,8 @@ go 1.25
 
 require (
 	github.com/ryo-kagawa/go-utils v1.4.0
-	golang.org/x/image v0.34.0
-	golang.org/x/sys v0.39.0
+	golang.org/x/image v0.35.0
+	golang.org/x/sys v0.40.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
