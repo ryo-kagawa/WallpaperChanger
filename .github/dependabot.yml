@@ -8,15 +8,12 @@ multi-ecosystem-groups:
 updates:
   - package-ecosystem: gomod
     directory: /workspace-go
+    patterns:
+      - "*"
     multi-ecosystem-group: infrastructure
-    groups:
-      dependencies:
-        patterns:
-          - "*"
+
   - package-ecosystem: cargo
     directory: /workspace-rust
+    patterns:
+      - "*"
     multi-ecosystem-group: infrastructure
-    groups:
-      dependencies:
-        patterns:
-          - "*"
