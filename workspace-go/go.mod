@@ -3,9 +3,9 @@ module github.com/ryo-kagawa/WallpaperChanger
 go 1.25
 
 require (
-	github.com/ryo-kagawa/go-utils v1.4.0
-	golang.org/x/image v0.35.0
-	golang.org/x/sys v0.40.0
+	github.com/ryo-kagawa/go-utils v1.5.1
+	golang.org/x/image v0.36.0
+	golang.org/x/sys v0.41.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
