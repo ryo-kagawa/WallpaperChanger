@@ -8,12 +8,7 @@ use windows::{
         Storage::FileSystem::{
             CreateFileW, FILE_ATTRIBUTE_NORMAL, FILE_SHARE_READ, FILE_SHARE_WRITE, OPEN_EXISTING,
         },
-        System::{
-            Console::{ATTACH_PARENT_PROCESS, AllocConsole, AttachConsole},
-            Registry::{
-                HKEY_CURRENT_USER, RRF_RT_REG_DWORD, RegGetValueW,
-            },
-        },
+        System::Console::{ATTACH_PARENT_PROCESS, AllocConsole, AttachConsole},
         UI::WindowsAndMessaging::{
             MB_OK, MessageBoxW, SPI_SETDESKWALLPAPER, SPIF_SENDCHANGE, SPIF_UPDATEINIFILE,
             SystemParametersInfoW,
@@ -159,25 +154,24 @@ fn run() -> Result<String, Box<dyn std::error::Error>> {
         .save_with_format(&output_file_path, image::ImageFormat::Bmp)
         .map_err(|_| "ファイル出力エラー")?;
 
-    unsafe {
-        let mut data = 0u32;
-        let mut data_size = std::mem::size_of::<u32> as u32;
-        let result = RegGetValueW(
-            HKEY_CURRENT_USER,
-            w!("Control Panel\\Desktop"),
-            w!("JPEGImportQuality"),
-            RRF_RT_REG_DWORD,
-            None,
-            Some(&mut data as *mut u32 as *mut std::ffi::c_void),
-            Some(&mut data_size),
-        );
-        if result.is_err() {
-            return Err(format!("RegGetValueW: {}", result.0).into());
+    match windows_registry::CURRENT_USER
+        .open("Control Panel\\Desktop")
+        .map_err(|error| format!("RegOpenKeyExW {}", error))
+        .and_then(|key| {
+            key.get_u32("JPEGImportQuality")
+                .map_err(|error| format!("RegGetValueW: {}", error))
+        }) {
+        Ok(data) => {
+            if data != 100 {
+                infos.push_str(&format!("RegGetValueW Control Panel\\Desktop value JPEGImportQuality is Not DWORD value 0x00000064"));
+            }
         }
-        if data != 100 {
-            infos.push_str(&format!("RegGetValueW Control Panel\\Desktop value JPEGImportQuality is Not DWORD value 0x00000064"));
+        Err(error) => {
+            infos.push_str(&error);
         }
+    }
 
+    unsafe {
         let wide: Vec<u16> = output_file_path
             .to_string_lossy()
             .encode_utf16()
